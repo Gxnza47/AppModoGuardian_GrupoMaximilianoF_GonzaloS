@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">ModoGuardian_GrupoMG</string>
+    <!-- Número de la Central usado por «Llamar a Central». Solo abre el marcador. REEMPLAZAR por el real. -->
+    <string name="telefono_central">+56200000000</string>
+</resources>

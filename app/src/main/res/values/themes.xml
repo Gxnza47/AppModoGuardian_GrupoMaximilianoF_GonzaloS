@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Base oscura para evitar el destello blanco al abrir la app -->
+    <style name="Theme.ModoGuardian_GrupoMG" parent="android:Theme.Material.NoActionBar" />
+</resources>
