@@ -30,6 +30,14 @@
           }
         },
         {
+          "client_id": "759537294245-g6kan8951o09m0tmpu7mtrh3raauo54b.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.modoguardian_grupomg",
+            "certificate_hash": "09767ee281a7fa3f67634d0d940584d45ef1185a"
+          }
+        },
+        {
           "client_id": "759537294245-f36kc6losg5f5ttebk5kta1r171jnaat.apps.googleusercontent.com",
           "client_type": 3
         }
