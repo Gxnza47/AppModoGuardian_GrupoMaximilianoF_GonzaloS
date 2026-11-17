@@ -23,7 +23,6 @@ class LoginViewModel(
     val usuariosDePrueba get() = repository.usuariosDePrueba()
 
     init {
-        // Un archivo local corrupto no debe impedir abrir el formulario.
         try {
             _uiState.update { it.copy(email = preferences.leerCorreo()) }
         } catch (e: Exception) {
@@ -34,18 +33,14 @@ class LoginViewModel(
     fun onEmailChange(value: String) {
         if (_uiState.value.isLoading) return
         _uiState.update {
-            it.copy(email = value, errorGeneral = null, errores = it.errores.copy(
-                email = null
-            ))
+            it.copy(email = value, errorGeneral = null, errores = it.errores.copy(email = null))
         }
     }
 
     fun onPasswordChange(value: String) {
         if (_uiState.value.isLoading) return
         _uiState.update {
-            it.copy(password = value, errorGeneral = null, errores = it.errores.copy(
-                password = null
-            ))
+            it.copy(password = value, errorGeneral = null, errores = it.errores.copy(password = null))
         }
     }
 
@@ -67,11 +62,9 @@ class LoginViewModel(
         _uiState.update { it.copy(errores = errores) }
         return !errores.hayErrores
     }
-
     fun login() {
         if (_uiState.value.isLoading || _uiState.value.usuario != null || !validarFormulario()) return
         val solicitud = _uiState.value
-        // Se marca antes de lanzar la coroutine para evitar solicitudes por doble toque.
         _uiState.update { it.copy(isLoading = true, errorGeneral = null) }
         viewModelScope.launch {
             try {
@@ -83,13 +76,43 @@ class LoginViewModel(
                     _uiState.update { it.copy(usuario = usuario, email = usuario.email, password = "") }
                 }
             } catch (e: CancellationException) {
-                throw e // La cancelación del ciclo de vida no es un error de autenticación.
+                throw e
             } catch (e: IOException) {
                 _uiState.update { it.copy(errorGeneral = "No se pudo conectar al servicio de prueba. Desactiva la simulación de desconexión y vuelve a intentar.") }
             } catch (e: Exception) {
                 _uiState.update { it.copy(errorGeneral = "No se pudo iniciar sesión. Puedes volver a intentarlo.") }
             } finally {
                 _uiState.update { it.copy(isLoading = false) }
+            }
+        }
+    }
+
+    fun loginConGoogle(email: String) {
+        if (_uiState.value.isLoading || _uiState.value.usuario != null) return
+        val solicitud = _uiState.value
+        _uiState.update { it.copy(isLoading = true, errorGeneral = null) }
+
+        viewModelScope.launch {
+            try {
+                val usuarioBase = usuariosDePrueba.lastOrNull() ?: usuariosDePrueba.first()
+                val usuarioGoogle = usuarioBase.copy(email = email)
+
+                guardarCorreoSeguro(if (solicitud.recordarCorreo) email else "")
+                _uiState.update {
+                    it.copy(
+                        usuario = usuarioGoogle,
+                        email = email,
+                        password = "",
+                        isLoading = false
+                    )
+                }
+            } catch (e: Exception) {
+                _uiState.update {
+                    it.copy(
+                        errorGeneral = "No se pudo completar el acceso con Google.",
+                        isLoading = false
+                    )
+                }
             }
         }
     }
